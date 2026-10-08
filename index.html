@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>齊來學短語</title>
+<style>
+:root{--ink:#12305E;--sky:#E9F2FD;--sky2:#D3E4FA;--blue:#1F5FBF;--blued:#174A99;
+  --num:#D9730D;--numbg:#FFF0DC;--mw:#1F7FCF;--mwbg:#E2F1FF;--adj:#2E8B45;--adjbg:#E4F6E8;--noun:#B0338F;--nounbg:#FBE6F5;
+  --ok:#178A5B;--no:#C93A32;--pick:#FFD400}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--sky)}
+body{position:fixed;top:0;left:0;right:0;bottom:0;color:var(--ink);touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+  font-family:"PingFang HK","PingFang TC","Noto Sans TC","Noto Sans CJK TC","Microsoft JhengHei",sans-serif}
+button{font-family:inherit;color:inherit;-webkit-appearance:none;appearance:none;margin:0;touch-action:manipulation;cursor:pointer}
+.hide{display:none!important}
+#stage{position:absolute;left:50%;top:50%;width:1024px;height:680px;margin:-340px 0 0 -512px;background:var(--sky)}
+#bar{position:absolute;left:10px;right:10px;top:8px;height:56px;display:flex;align-items:center}
+#title{flex:1;font-size:30px;font-weight:900;white-space:nowrap;padding-left:4px}
+#prog{font-size:30px;font-weight:900;margin-right:6px;white-space:nowrap}
+.tool{height:56px;margin-left:10px;padding:0 14px;border:3px solid var(--blue);border-radius:16px;background:#fff;font-size:30px;font-weight:800;color:var(--blued);white-space:nowrap}
+.tool:active{background:var(--sky2)}
+.btn{min-height:62px;padding:0 30px;border:0;border-radius:18px;background:var(--blue);color:#fff;font-size:32px;font-weight:900;box-shadow:0 5px 0 var(--blued);white-space:nowrap}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--blued)}
+.btn[disabled]{background:#9FB3D1;box-shadow:0 5px 0 #7F94B5;color:#EEF3FA}
+.btn.go{background:#B35C00;box-shadow:0 5px 0 #7A3E00}
+
+/* 首頁 */
+#home{position:absolute;left:0;right:0;top:72px;bottom:0;text-align:center}
+#home h1{margin:26px 0 6px;font-size:68px;font-weight:900}
+#home h2{margin:0 0 26px;font-size:34px;font-weight:900}
+#home p{margin:26px 0 30px;font-size:30px;font-weight:700}
+.eg{display:inline-flex;align-items:flex-start;background:#fff;border-radius:22px;border:4px solid var(--sky2);padding:20px 28px 14px;font-size:44px;font-weight:900}
+.eg .w{margin:0 7px;text-align:center}
+.eg .w b{display:block;min-width:74px;padding:4px 14px;border-radius:12px;border:4px solid}
+.eg .w i{display:block;font-style:normal;font-size:24px;margin-top:6px}
+.eg .t{line-height:68px;margin:0 6px}
+.c-num b,.c-num.chip,.c-num.slot{border-color:var(--num);background:var(--numbg)} .c-num i,.c-num .lab{color:var(--num)}
+.c-mw b,.c-mw.chip,.c-mw.slot{border-color:var(--mw);background:var(--mwbg)} .c-mw i,.c-mw .lab{color:var(--mw)}
+.c-adj b,.c-adj.chip,.c-adj.slot{border-color:var(--adj);background:var(--adjbg)} .c-adj i,.c-adj .lab{color:var(--adj)}
+.c-noun b,.c-noun.chip,.c-noun.slot{border-color:var(--noun);background:var(--nounbg)} .c-noun i,.c-noun .lab{color:var(--noun)}
+
+/* 題目 */
+#game{position:absolute;left:0;right:0;top:72px;bottom:0}
+#pic{position:absolute;left:10px;top:0;width:250px;height:226px;background:#fff;border-radius:20px;border:4px solid var(--sky2);display:flex;align-items:center;justify-content:center;font-size:72px;line-height:1.1;text-align:center}
+#pic .box{display:inline-block;border:4px solid #7FA6D9;border-radius:12px;background:#EAF4FF;font-size:28px;padding:6px 4px;margin:3px}
+#sent{position:absolute;left:272px;right:10px;top:0;height:226px;background:#fff;border-radius:20px;border:4px solid var(--sky2);padding:10px 12px;
+  display:flex;flex-wrap:nowrap;align-items:flex-start;justify-content:center;padding-top:60px;font-size:36px;font-weight:900;white-space:nowrap}
+#sent .t{line-height:72px;margin:0 4px}
+.slotw{margin:0 4px;text-align:center}
+.slot{display:block;min-width:76px;height:72px;line-height:62px;padding:0 10px;border-radius:14px;border:4px dashed;font-size:36px;font-weight:900;color:var(--ink)}
+.slot.full{border-style:solid}
+.slot.bad{animation:shake .45s;border-color:var(--no)!important}
+.slot.good{border-color:var(--ok)!important;background:#E3F6EC!important}
+.slotw .lab{display:block;font-size:24px;font-weight:800;margin-top:2px}
+@keyframes shake{20%{transform:translateX(-10px)}40%{transform:translateX(9px)}60%{transform:translateX(-7px)}80%{transform:translateX(5px)}}
+#bank{position:absolute;left:10px;right:10px;top:236px;height:292px;background:var(--sky2);border-radius:20px;padding:6px 12px}
+.rowb{display:flex;align-items:center;height:70px}
+.rowb .lab{flex:none;width:112px;font-size:28px;font-weight:900}
+.chip{min-width:78px;height:58px;margin-right:12px;padding:0 14px;border-radius:14px;border:4px solid;font-size:32px;font-weight:900;color:var(--ink);box-shadow:0 3px 0 rgba(18,48,94,.25)}
+.chip.on{box-shadow:0 0 0 5px var(--pick),0 0 0 8px var(--ink);transform:scale(1.05)}
+.chip[disabled]{opacity:.55}
+#foot{position:absolute;left:10px;right:10px;top:538px;height:64px;display:flex;align-items:center}
+#msg{flex:1;height:64px;margin-right:12px;padding:0 16px;border-radius:16px;background:#fff;border:3px solid var(--sky2);font-size:26px;line-height:30px;font-weight:800;display:flex;align-items:center}
+#msg.ok{border-color:var(--ok);color:#0D5E3D} #msg.no{border-color:var(--no);color:#8E211B}
+
+/* 結果 */
+#end{position:absolute;left:0;right:0;top:72px;bottom:0;text-align:center}
+#end h1{margin:40px 0 10px;font-size:60px;font-weight:900}
+#end .stars{font-size:84px;letter-spacing:10px;color:#C9D4E5} #end .stars i{font-style:normal;color:#F5B400}
+#end p{font-size:34px;font-weight:800;margin:14px 0 8px}
+#end .list{font-size:28px;font-weight:700;line-height:1.5;margin:0 0 26px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bar"><div id="title">齊來學短語</div><div id="prog"></div>
+    <button class="tool" id="bSound" type="button">音效開</button><button class="tool" id="bFull" type="button">全螢幕</button><button class="tool" id="bReset" type="button">重新開始</button></div>
+
+  <div id="home">
+    <h1>齊來學短語</h1><h2>數詞 ＋ 量詞 ＋ 形容詞 ＋ 名詞</h2>
+    <div class="eg"><span class="t">這是</span>
+      <span class="w c-num"><b>一</b><i>數詞</i></span><span class="w c-mw"><b>本</b><i>量詞</i></span><span class="w c-adj"><b>厚厚</b><i>形容詞</i></span>
+      <span class="t">的</span><span class="w c-noun"><b>字典</b><i>名詞</i></span><span class="t">。</span></div>
+    <p>看圖畫，選出合適的詞語，完成句子！</p>
+    <button class="btn" id="bStart" type="button" style="min-height:84px;font-size:42px;padding:0 54px">開始</button>
+  </div>
+
+  <div id="game" class="hide">
+    <div id="pic"></div><div id="sent"></div><div id="bank"></div>
+    <div id="foot"><div id="msg"></div><button class="btn" id="bCheck" type="button" disabled>提交</button><button class="btn go hide" id="bNext" type="button">下一題</button></div>
+  </div>
+
+  <div id="end" class="hide"><h1>完成了！</h1><div class="stars" id="stars"></div><p id="endTx"></p><div class="list" id="endList"></div>
+    <button class="btn" id="bAgain" type="button" style="min-height:76px;font-size:38px;padding:0 48px">再玩一次</button></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ============ 可修改的內容 ============ */
+var BANK = {
+  num:  {name:"數詞",   words:["一","兩","三"]},
+  mw:   {name:"量詞",   words:["本","座","個","枝","道","件","朵","盒"]},
+  adj:  {name:"形容詞", words:["高高","厚厚","彎彎","新鮮","可愛","香甜"]},
+  noun: {name:"名詞",   words:["山","洋娃娃","橋","蛋糕","雞蛋"]}
+};
+var QUESTIONS = [
+  {pic:"⛰️",        lead:"我看見",   ans:{num:"一",mw:"座",adj:"高高",noun:"山"}},
+  {pic:"🪆",        lead:"我有",     ans:{num:"一",mw:"個",adj:"可愛",noun:"洋娃娃"}},
+  {pic:"🌉",        lead:"公園裏有", ans:{num:"一",mw:"道",adj:"彎彎",noun:"橋"}},
+  {pic:"🧁🧁🧁",    lead:"桌子上有", ans:{num:"三",mw:"件",adj:"香甜",noun:"蛋糕"}},
+  {pic:'<span class="box">🥚🥚🥚</span><span class="box">🥚🥚🥚</span>', lead:"冰箱裏有", ans:{num:"兩",mw:"盒",adj:"新鮮",noun:"雞蛋"}}
+];
+var HINT = "數一數圖畫裏有多少，再想想用哪個量詞和形容詞。";
+/* ===================================== */
+var ORDER=["num","mw","adj","noun"];
+var $=function(id){return document.getElementById(id);};
+var stage=$("stage"), qi=0, pick={}, tries=0, done=false, results=[], soundOn=true, lockAt=0, checkAt=0, AC=null;
+
+function fit(){var s=Math.min(window.innerWidth/1024,window.innerHeight/680); stage.style.transform="scale("+s+")";}
+window.addEventListener("resize",fit); window.addEventListener("orientationchange",function(){setTimeout(fit,250);}); fit();
+document.addEventListener("touchmove",function(e){e.preventDefault();},{passive:false});
+["gesturestart","gesturechange","dragstart","contextmenu","selectstart","dblclick"].forEach(function(t){document.addEventListener(t,function(e){e.preventDefault();});});
+
+function tone(f,at,dur,type,vol){
+  if(!soundOn) return; if(!AC){var C=window.AudioContext||window.webkitAudioContext; if(!C) return; try{AC=new C();}catch(e){return;}}
+  if(AC.state==="suspended") AC.resume();
+  var o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime+at; o.type=type||"triangle"; o.frequency.setValueAtTime(f,t);
+  g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(vol||0.16,t+0.015); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t+dur+0.03);
+}
+function sTap(){tone(600,0,.07);} function sNo(){tone(220,0,.16,"sawtooth",.1);tone(175,.15,.22,"sawtooth",.1);}
+function sYes(){[523,659,784,1047].forEach(function(f,i){tone(f,i*.11,.22);});}
+function say(t,k){$("msg").textContent=t; $("msg").className=k||"";}
+function show(id){["home","game","end"].forEach(function(x){$(x).classList.toggle("hide",x!==id);});}
+function guard(){var n=Date.now(); if(n-lockAt<300) return false; lockAt=n; return true;}
+
+function startGame(){ qi=0; results=[]; loadQ(); show("game"); }
+function loadQ(){
+  var q=QUESTIONS[qi]; pick={}; tries=0; done=false; checkAt=0;
+  $("prog").textContent="第"+(qi+1)+"題／共"+QUESTIONS.length+"題";
+  $("pic").innerHTML=q.pic;
+  var s='<span class="t">'+q.lead+'</span>';
+  ORDER.forEach(function(k){
+    if(k==="noun") s+='<span class="t">的</span>';
+    s+='<span class="slotw c-'+k+'"><button type="button" class="slot c-'+k+'" data-k="'+k+'"></button><span class="lab">'+BANK[k].name+'</span></span>';
+  });
+  $("sent").innerHTML=s+'<span class="t">。</span>';
+  var b="";
+  ORDER.forEach(function(k){
+    b+='<div class="rowb c-'+k+'"><span class="lab">'+BANK[k].name+'</span>';
+    BANK[k].words.forEach(function(w){b+='<button type="button" class="chip c-'+k+'" data-k="'+k+'" data-w="'+w+'">'+w+'</button>';});
+    b+='</div>';
+  });
+  $("bank").innerHTML=b;
+  $("bCheck").classList.remove("hide"); $("bNext").classList.add("hide");
+  $("bNext").textContent = qi===QUESTIONS.length-1 ? "看結果" : "下一題";
+  draw(); say("點選下面的詞語，填滿四個空格。點空格可以取消。");
+}
+function draw(){
+  var full=true;
+  ORDER.forEach(function(k){
+    var sl=$("sent").querySelector('.slot[data-k="'+k+'"]'); sl.textContent=pick[k]||""; sl.classList.toggle("full",!!pick[k]); if(!pick[k]) full=false;
+  });
+  var chips=$("bank").querySelectorAll(".chip");
+  for(var i=0;i<chips.length;i++){ var c=chips[i]; c.classList.toggle("on",pick[c.getAttribute("data-k")]===c.getAttribute("data-w")); c.disabled=done; }
+  $("bCheck").disabled=!full||done;
+}
+$("bank").addEventListener("click",function(e){
+  var c=e.target.closest(".chip"); if(!c||done) return; sTap();
+  var k=c.getAttribute("data-k"), w=c.getAttribute("data-w"); pick[k]=(pick[k]===w)?null:w;
+  var sl=$("sent").querySelector('.slot[data-k="'+k+'"]'); sl.classList.remove("bad"); draw();
+});
+$("sent").addEventListener("click",function(e){
+  var s=e.target.closest(".slot"); if(!s||done) return; var k=s.getAttribute("data-k"); if(pick[k]){sTap(); pick[k]=null; s.classList.remove("bad"); draw();}
+});
+$("bCheck").addEventListener("click",function(){
+  var now=Date.now(); if(done||$("bCheck").disabled||now-checkAt<700) return; checkAt=now;
+  var q=QUESTIONS[qi], wrong=ORDER.filter(function(k){return pick[k]!==q.ans[k];});
+  if(wrong.length===0){ finish(true); return; }
+  tries++; sNo();
+  if(tries===1){
+    wrong.forEach(function(k){ var sl=$("sent").querySelector('.slot[data-k="'+k+'"]'); sl.classList.remove("bad"); void sl.offsetWidth; sl.classList.add("bad"); });
+    setTimeout(function(){ if(done||tries!==1) return; wrong.forEach(function(k){pick[k]=null;}); draw(); },600);
+    say("有 "+wrong.length+" 個詞語不合適，再試一次！"+HINT,"no");
+  }else{ ORDER.forEach(function(k){pick[k]=q.ans[k];}); finish(false); }
+});
+function finish(right){
+  done=true; results.push(right); draw();
+  var q=QUESTIONS[qi], sl=$("sent").querySelectorAll(".slot"); for(var i=0;i<sl.length;i++){sl[i].classList.remove("bad"); sl[i].classList.add("good");}
+  var full=q.lead+q.ans.num+q.ans.mw+q.ans.adj+"的"+q.ans.noun+"。";
+  if(right){ sYes(); say("答對了！"+full,"ok"); } else say("正確答案："+full,"no");
+  $("bCheck").classList.add("hide"); $("bNext").classList.remove("hide");
+}
+$("bNext").addEventListener("click",function(){
+  if(!done||!guard()) return; sTap();
+  if(qi<QUESTIONS.length-1){ qi++; loadQ(); return; }
+  var n=results.filter(function(r){return r;}).length, st="", li="";
+  results.forEach(function(r){st+= r?"<i>★</i>":"★";});
+  QUESTIONS.forEach(function(q,i){ if(!results[i]) li+="第"+(i+1)+"題："+q.ans.num+q.ans.mw+q.ans.adj+"的"+q.ans.noun+"<br>"; });
+  $("stars").innerHTML=st; $("endTx").textContent="你答對了 "+n+"／"+QUESTIONS.length+" 題";
+  $("endList").innerHTML= li ? "要重溫的短語：<br>"+li : "全部答對，真厲害！";
+  $("prog").textContent=""; show("end"); if(n===QUESTIONS.length) sYes();
+});
+function home(){ $("prog").textContent=""; show("home"); }
+$("bStart").addEventListener("click",function(){sTap(); startGame();});
+$("bAgain").addEventListener("click",function(){sTap(); startGame();});
+$("bReset").addEventListener("click",function(){sTap(); home();});
+$("bSound").addEventListener("click",function(){soundOn=!soundOn; this.textContent=soundOn?"音效開":"音效關"; if(soundOn) sTap();});
+$("bFull").addEventListener("click",function(){
+  var d=document, el=d.documentElement;
+  try{ if(d.fullscreenElement||d.webkitFullscreenElement){(d.exitFullscreen||d.webkitExitFullscreen).call(d);} else {var r=el.requestFullscreen||el.webkitRequestFullscreen; if(r){var p=r.call(el); if(p&&p.catch)p.catch(function(){});}} }catch(e){}
+  setTimeout(fit,300);
+});
+document.addEventListener("fullscreenchange",fit); document.addEventListener("webkitfullscreenchange",fit);
+})();
+</script>
+</body>
+</html>
